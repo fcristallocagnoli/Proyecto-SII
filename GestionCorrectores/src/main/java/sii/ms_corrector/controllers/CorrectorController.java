@@ -1,7 +1,7 @@
 package sii.ms_corrector.controllers;
 
 import java.net.URI;
-import java.util.Arrays;
+// import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -24,10 +24,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import jakarta.annotation.security.RolesAllowed;
 import sii.ms_corrector.dtos.CorrectorDTO;
 import sii.ms_corrector.dtos.CorrectorNuevoDTO;
 import sii.ms_corrector.entities.Corrector;
-import sii.ms_corrector.security.TokenUtils;
+// import sii.ms_corrector.security.TokenUtils;
 import sii.ms_corrector.services.CorrectorService;
 import sii.ms_corrector.services.exceptions.AccesoNoAutorizado;
 import sii.ms_corrector.services.exceptions.CorrectorNoEncontrado;
@@ -64,10 +65,11 @@ public class CorrectorController {
 	 * @exception AccesoNoAutorizado {@code 403 Forbidden} Acceso no autorizado
 	 * @exception CorrectorNoEncontrado {@code 404 Not Found} El corrector no existe
 	 */
+	@RolesAllowed(value = {"ROLE_CORRECTOR"})
 	@GetMapping("{id}")
 	public ResponseEntity<CorrectorDTO> obtenerCorrector(@PathVariable Long id, @RequestHeader Map<String,String> header) {
-		if (!TokenUtils.comprobarAcceso(header, Arrays.asList("VICERRECTORADO")))
-			throw new AccesoNoAutorizado();
+		// if (!TokenUtils.comprobarAcceso(header, Arrays.asList("VICERRECTORADO")))
+		// 	throw new AccesoNoAutorizado();
 		Corrector correctorById = service.getCorrectorById(id);
 		return ResponseEntity.ok(CorrectorDTO.fromCorrector(correctorById));
 	}
@@ -87,10 +89,11 @@ public class CorrectorController {
 	 * @see "para obtener un {@code 200 OK}, la materia contenida en {@link CorrectorNuevoDTO}
 	 * debe ser una de las declaradas en en método {@link sii.ms_corrector.services.MateriaService#inicializar() inicializar()}"
 	 */
+	@RolesAllowed(value = {"ROLE_CORRECTOR"})
 	@PutMapping("{id}")
 	public ResponseEntity<CorrectorDTO> modificaCorrector(@PathVariable Long id, @RequestBody CorrectorNuevoDTO corrector, @RequestHeader Map<String,String> header) {
-		if (!TokenUtils.comprobarAcceso(header, Arrays.asList("VICERRECTORADO")))
-			throw new AccesoNoAutorizado();
+		// if (!TokenUtils.comprobarAcceso(header, Arrays.asList("VICERRECTORADO")))
+		// 	throw new AccesoNoAutorizado();
 		Corrector correctorMod = service.modificarCorrector(id, corrector);
 		return ResponseEntity.ok(CorrectorDTO.fromCorrector(correctorMod));
 	}
@@ -103,11 +106,12 @@ public class CorrectorController {
 	 * @exception AccesoNoAutorizado {@code 403 Forbidden} Acceso no autorizado
 	 * @exception CorrectorNoEncontrado {@code 404 Not Found} El corrector no existe
 	 */
+	@RolesAllowed(value = {"ROLE_CORRECTOR"})
 	@DeleteMapping("{id}")
 	@ResponseStatus(code = HttpStatus.OK)
 	public void eliminarCorrector(@PathVariable Long id, @RequestHeader Map<String,String> header) {
-		if (!TokenUtils.comprobarAcceso(header, Arrays.asList("VICERRECTORADO")))
-			throw new AccesoNoAutorizado();
+		// if (!TokenUtils.comprobarAcceso(header, Arrays.asList("VICERRECTORADO")))
+		// 	throw new AccesoNoAutorizado();
 		service.eliminarCorrector(id);
 	}
 
@@ -118,10 +122,11 @@ public class CorrectorController {
      * @return {@code 200 OK} - {@link List}<{@linkplain CorrectorDTO}> Lista de correctores
 	 * @exception AccesoNoAutorizado {@code 403 Forbidden} Acceso no autorizado
      */
+	@RolesAllowed(value = {"ROLE_CORRECTOR"})
     @GetMapping
     public ResponseEntity<List<CorrectorDTO>> obtieneCorrectores(@RequestParam(required = false) Long idConvocatoria, @RequestHeader Map<String,String> header) {
-		if (!TokenUtils.comprobarAcceso(header, Arrays.asList("VICERRECTORADO")))
-			throw new AccesoNoAutorizado();
+		// if (!TokenUtils.comprobarAcceso(header, Arrays.asList("VICERRECTORADO")))
+		// 	throw new AccesoNoAutorizado();
 		List<Corrector> correctores;
 		if (idConvocatoria == null) {
 			correctores = service.getTodosCorrectores();
@@ -143,10 +148,11 @@ public class CorrectorController {
 	 * @see "para obtener un {@code 200 OK}, la materia contenida en {@link CorrectorNuevoDTO}
 	 * debe ser una de las declaradas en en método {@link sii.ms_corrector.services.MateriaService#inicializar() inicializar()}"
      */
+	@RolesAllowed(value = {"ROLE_CORRECTOR"})
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)	// "aplication/json"
 	public ResponseEntity<?> añadirCorrector(@RequestBody CorrectorNuevoDTO nuevoCorrector, UriComponentsBuilder builder, @RequestHeader Map<String,String> header) {
-		if (!TokenUtils.comprobarAcceso(header, Arrays.asList("VICERRECTORADO")))
-			throw new AccesoNoAutorizado();
+		// if (!TokenUtils.comprobarAcceso(header, Arrays.asList("VICERRECTORADO")))
+		// 	throw new AccesoNoAutorizado();
 		Long id = service.añadirCorrector(nuevoCorrector);
 		URI uri = builder
 				.path("/correctores")
