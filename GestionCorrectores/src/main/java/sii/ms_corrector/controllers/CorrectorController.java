@@ -8,6 +8,7 @@ import java.util.function.Function;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,7 +24,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import jakarta.annotation.security.RolesAllowed;
 import sii.ms_corrector.dtos.CorrectorDTO;
 import sii.ms_corrector.dtos.CorrectorNuevoDTO;
 import sii.ms_corrector.entities.Corrector;
@@ -63,7 +63,7 @@ public class CorrectorController {
 	 * @exception AccesoNoAutorizado {@code 401 Unauthorized} Acceso no autorizado
 	 * @exception CorrectorNoEncontrado {@code 404 Not Found} El corrector no existe
 	 */
-	@RolesAllowed(value = {"ROLE_CORRECTOR"})
+	@PreAuthorize("hasRole('ROLE_CORRECTOR')")
 	@GetMapping("{id}")
 	public ResponseEntity<CorrectorDTO> obtenerCorrector(@PathVariable Long id, @RequestHeader Map<String,String> header) {
 		Corrector correctorById = service.getCorrectorById(id);
@@ -85,7 +85,7 @@ public class CorrectorController {
 	 * @see "para obtener un {@code 200 OK}, la materia contenida en {@link CorrectorNuevoDTO}
 	 * debe ser una de las declaradas en en método {@link sii.ms_corrector.services.MateriaService#inicializar() inicializar()}"
 	 */
-	@RolesAllowed(value = {"ROLE_CORRECTOR"})
+	@PreAuthorize("hasRole('ROLE_CORRECTOR')")
 	@PutMapping("{id}")
 	public ResponseEntity<CorrectorDTO> modificaCorrector(@PathVariable Long id, @RequestBody CorrectorNuevoDTO corrector, @RequestHeader Map<String,String> header) {
 		Corrector correctorMod = service.modificarCorrector(id, corrector);
@@ -100,7 +100,7 @@ public class CorrectorController {
 	 * @exception AccesoNoAutorizado {@code 401 Unauthorized} Acceso no autorizado
 	 * @exception CorrectorNoEncontrado {@code 404 Not Found} El corrector no existe
 	 */
-	@RolesAllowed(value = {"ROLE_CORRECTOR"})
+	@PreAuthorize("hasRole('ROLE_CORRECTOR')")
 	@DeleteMapping("{id}")
 	@ResponseStatus(code = HttpStatus.OK)
 	public void eliminarCorrector(@PathVariable Long id, @RequestHeader Map<String,String> header) {
@@ -114,7 +114,7 @@ public class CorrectorController {
      * @return {@code 200 OK} - {@link List}<{@linkplain CorrectorDTO}> Lista de correctores
 	 * @exception AccesoNoAutorizado {@code 401 Unauthorized} Acceso no autorizado
      */
-	@RolesAllowed(value = {"ROLE_CORRECTOR"})
+	@PreAuthorize("hasRole('ROLE_CORRECTOR')")
     @GetMapping
     public ResponseEntity<List<CorrectorDTO>> obtieneCorrectores(@RequestParam(required = false) Long idConvocatoria, @RequestHeader Map<String,String> header) {
 		List<Corrector> correctores;
@@ -138,7 +138,7 @@ public class CorrectorController {
 	 * @see "para obtener un {@code 200 OK}, la materia contenida en {@link CorrectorNuevoDTO}
 	 * debe ser una de las declaradas en en método {@link sii.ms_corrector.services.MateriaService#inicializar() inicializar()}"
      */
-	@RolesAllowed(value = {"ROLE_CORRECTOR"})
+	@PreAuthorize("hasRole('ROLE_CORRECTOR')")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)	// "aplication/json"
 	public ResponseEntity<?> añadirCorrector(@RequestBody CorrectorNuevoDTO nuevoCorrector, UriComponentsBuilder builder, @RequestHeader Map<String,String> header) {
 		Long id = service.añadirCorrector(nuevoCorrector);
