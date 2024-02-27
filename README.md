@@ -63,14 +63,6 @@ docker run -itp <host port>:<cont.port> --name <name> --network <red> <image>
 
 - Microservicio [Gestión de Correctores](GestionCorrectores/.docs/README.corr.md)
 
-## Authors
-
-- [@M4rdom](https://www.github.com/M4rdom)
-- [@MAngelGC](https://www.github.com/MAngelGC)
-- [@fcristallocagnoli](https://www.github.com/fcristallocagnoli)
-- [@RocioLN15](https://github.com/RocioLN15)
-- [@jorgeroma](https://github.com/jorgeroma)
-
 ## Documentación
 
 - [Spring Boot Maven Plugin](https://docs.spring.io/spring-boot/docs/current/maven-plugin/reference/htmlsingle/)
