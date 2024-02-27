@@ -6,6 +6,8 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
+# TODO: Fix current workflow to only run when changes are made to the GestionCorrectores folder
+
 name: CI/CD GestionCorrectores
 
 on:
