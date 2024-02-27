@@ -72,8 +72,6 @@ public class CorrectorController {
 		return ResponseEntity.ok(CorrectorDTO.fromCorrector(correctorById));
 	}
 
-	// new coment
-
 	/**
 	 * Actualiza un corrector
 	 * <p>
