@@ -39,7 +39,7 @@ import sii.ms_corrector.services.exceptions.PeticionIncorrecta;
 public class CorrectorController {
 
     private CorrectorService service;
-    
+
     public CorrectorController(CorrectorService service) {
         this.service = service;
     }
