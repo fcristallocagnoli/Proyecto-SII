@@ -39,6 +39,8 @@ import sii.ms_corrector.services.exceptions.PeticionIncorrecta;
 public class CorrectorController {
 
     private CorrectorService service;
+
+	// Github action
     
     public CorrectorController(CorrectorService service) {
         this.service = service;
