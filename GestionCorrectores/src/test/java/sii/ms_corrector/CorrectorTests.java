@@ -5,11 +5,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import org.apache.tomcat.util.json.JSONParser;
+import org.apache.tomcat.util.json.ParseException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,6 +35,8 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriBuilder;
 import org.springframework.web.util.UriBuilderFactory;
 
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
 import sii.ms_corrector.entities.*;
 import sii.ms_corrector.repositories.*;
 import sii.ms_corrector.services.MateriaService;
@@ -63,17 +68,6 @@ class CorrectorTests {
 	@Autowired
 	private MateriaService matService;
 
-	// Utilizamos esta variable para que no se inicialice la base de datos en cada test.
-	// De este modo, solo se inicializa una vez, en el primer test (como si fuera un @BeforeAll)
-	// No podemos utilizar @BeforeAll porque el método inicializar() del servicio de Materias no es un metodo estático.
-
-	String tokenValido = JwtGenerator.createToken("user", 5, "VICERRECTORADO");		// valido por 5 horas
-	// Los tokens tokenCaducado y tokenNoAuth son equivalentes. No se distingue el error de que un token
-	// haya expirado del error de que un token no tenga los permisos (roles) adecuados.
-	// Ambos devuelven el codigo 403.
-    String tokenCaducado = JwtGenerator.createToken("user", -1, "VICERRECTORADO");				// caducado hace 1 hora
-    String tokenNoAuth = JwtGenerator.createToken("user", 5, "CORRECTOR");				// rol incorrecto
-
 	@BeforeAll
 	public static void inicializarLogger() throws SecurityException, IOException {
 		FileHandler fileTxt = new FileHandler("src/test/TestCorrectorLogger.txt");
@@ -81,13 +75,50 @@ class CorrectorTests {
 		fileTxt.setFormatter(formatterTxt);
 		LOG.addHandler(fileTxt);
 	}
-	
+	// Utilizamos esta variable para que no se inicialice la base de datos en cada test.
+	// De este modo, solo se inicializa una vez, en el primer test (como si fuera un @BeforeAll)
+	// No podemos utilizar @BeforeAll porque el método inicializar() del servicio de Materias no es un metodo estático.
+
+	String tokenValido = "";		// a devolver por /login
+	// Los tokens tokenCaducado y tokenNoAuth son equivalentes. No se distingue el error de que un token
+	// haya expirado del error de que un token no tenga los permisos (roles) adecuados.
+	// Ambos devuelven el codigo 403.
+    String tokenCaducado = JwtGenerator.createToken("user", -1, "VICERRECTORADO");				// caducado hace 1 hora
+    String tokenNoAuth = JwtGenerator.createToken("user", 5, "CORRECTOR");				// rol incorrecto
+
 	@BeforeEach
 	public void initializeDatabase() {
 		correctorRepo.deleteAll();
 		matConvRepo.deleteAll();
 		// Inicializamos la base de datos (internamente comprueba si se ha hecho ya)
 		matService.inicializar();
+
+		// REGISTER
+		var peticion = auth("http", "localhost", port, "/register",
+			new JSONObject().appendField("username", "fabri")
+							.appendField("password", "password")
+							.appendField("roles", new JSONArray().appendElement("CORRECTOR")));
+        var respuesta = restTemplate.exchange(peticion, new ParameterizedTypeReference<String>() {});
+
+		if (respuesta.getStatusCode().value() != 201) {
+			LOG.warning("Error al registrar el usuario");
+		}
+		
+		// LOGIN
+		peticion = auth("http", "localhost", port, "/login",
+			new JSONObject().appendField("username", "fabri")
+							.appendField("password", "password")
+							.appendField("roles", new JSONArray().appendElement("CORRECTOR")));
+        respuesta = restTemplate.exchange(peticion, new ParameterizedTypeReference<String>() {});
+
+		LinkedHashMap<String, Object> token = null;
+		try {
+			token = new JSONParser(respuesta.getBody()).parseObject();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		tokenValido = (String) token.get("token");
+		LOG.warning("Token: " + tokenValido);
 	}
 
 	private URI uri(String scheme, String host, int port, String ...paths) {
@@ -112,6 +143,14 @@ class CorrectorTests {
 			ub = ub.path(path);
 		}
 		return ub.build();
+	}
+
+	private <T> RequestEntity<T> auth(String scheme, String host, int port, String path, T object) {
+		URI uri = uri(scheme, host, port, path);
+		var peticion = RequestEntity.post(uri)
+			.contentType(MediaType.APPLICATION_JSON)
+			.body(object);
+		return peticion;
 	}
 	
 	private RequestEntity<Void> get(String scheme, String host, int port, String path, String token) {
@@ -200,6 +239,63 @@ class CorrectorTests {
 		// Convertimos el corrector obtenido de la BD a CorrectorNuevoDTO para compararlos
 		// (al añadir un corrector a la BD internamente se le asignan nuevos atributos)
 		compruebaCampos(correctorDTO, corrBD);
+	}
+
+	@Nested
+	@DisplayName("Endpoints de autorización:")
+	public class AuthTests {
+		@Test
+		@DisplayName("usuario se registra correctamente")
+		public void register() {
+			var peticion = auth("http", "localhost", port, "/register",
+				new JSONObject().appendField("username", "usuario")
+								.appendField("password", "password")
+								.appendField("roles", new JSONArray().appendElement("CORRECTOR")));
+			var respuesta = restTemplate.exchange(peticion, new ParameterizedTypeReference<String>() {});
+
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(201);
+		}
+
+		@Test
+		@DisplayName("usuario se registra por segunda vez")
+		public void registerRepetido() {
+			var peticion = auth("http", "localhost", port, "/register",
+				new JSONObject().appendField("username", "usuario")
+								.appendField("password", "password")
+								.appendField("roles", new JSONArray().appendElement("CORRECTOR")));
+			var respuesta = restTemplate.exchange(peticion, new ParameterizedTypeReference<String>() {});
+
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(201);
+
+			respuesta = restTemplate.exchange(peticion, new ParameterizedTypeReference<String>() {});
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(409);
+		}
+
+		@Test
+		@DisplayName("usuario se loguea correctamente")
+		public void login() {
+			// Registro
+			var peticion = auth("http", "localhost", port, "/register",
+				new JSONObject().appendField("username", "fabri")
+								.appendField("password", "password")
+								.appendField("roles", new JSONArray().appendElement("CORRECTOR")));
+			var respuesta = restTemplate.exchange(peticion, new ParameterizedTypeReference<String>() {});
+			// Login
+			peticion = auth("http", "localhost", port, "/login",
+				new JSONObject().appendField("username", "fabri")
+								.appendField("password", "password")
+								.appendField("roles", new JSONArray().appendElement("CORRECTOR")));
+			respuesta = restTemplate.exchange(peticion, new ParameterizedTypeReference<String>() {});
+
+			LinkedHashMap<String, Object> token = null;
+			try {
+				token = new JSONParser(respuesta.getBody()).parseObject();
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+			assertThat(token.get("token")).isNotNull();
+		}
 	}
 	
 	@Nested
