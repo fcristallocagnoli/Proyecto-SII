@@ -34,39 +34,6 @@ services:
       backend-correctores:
         condition: service_healthy
 
-  backend-evalexamenes:
-    image: evalexamenes/back
-    build: ./EvaluacionExamenes
-    pull_policy: build
-    ports:
-      - "8080:8080"
-    networks:
-      - chupipandi-net
-    depends_on:
-      db-service:
-        condition: service_started
-      backend-correctores:
-        condition: service_healthy
-    restart: always
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://backend-evalexamenes:8080/healthcheck || exit 1"]
-      interval: 5s
-      retries: 10
-
-  frontend-evalexamenes:
-    image: evalexamenes/front
-    build:
-      context: ./frontend-evalexamenes
-      target: builder
-    pull_policy: build
-    ports:
-      - "4200:4200"
-    networks:
-      - chupipandi-net
-    depends_on:
-      backend-evalexamenes:
-        condition: service_healthy
-
   db-service:
     image: database-h2
     build:
