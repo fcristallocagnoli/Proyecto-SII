@@ -1,13 +1,14 @@
 
 # Proyecto Microservicios
 
-Implementación de los microservicios de Gestión de Correctores y Evaluación de Exámenes para la asignatura de Sistemas de Información para Internet.
-- **GestionCorrectores**: puede ejecutarse independientemente del otro microservicio.
-- **EvaluacionExamenes**: depende del microservicio de correctores para su correcto funcionamiento.
+Implementación de un microservicio de Gestión de Correctores para la asignatura de Sistemas de Información para Internet.
+- **GestionCorrectores**: CRUD de los correctores de exámenes.
+<!-- Proyecto futuro: implementar Gestion de Usuarios -->
+<!-- - **GestionUsuarios**: CRUD de usuarios de la aplicación. Permitirá a cada usuario a cambiar sus datos de contacto y cambiar su contraseña en caso de que se le olvide. Permitirá hacer login y generará el token de autenticación para el acceso a los servicios Web. -->
 
 ## Despliegue con Docker
 ### Docker compose
-Para poner en marcha los dos microservicios al completo haremos uso de **[docker-compose](https://docs.docker.com/compose/gettingstarted/)**. Las imágenes se construirán automáticamente y se pondrán en ejecución **5 contenedores**: correctores back y front, evalexamenes back y front, más una base de datos común a ambos microservicios. En conjunto a ellos, se crean una red virtual **chupipandi-net** y un volumen **db-data** donde persistirán los datos de la BD.
+Para poner en marcha el microservicio junto a la base de datos haremos uso de **[docker-compose](https://docs.docker.com/compose/gettingstarted/)**. Las imágenes se construirán automáticamente y se pondrán en ejecución **3 contenedores**, correspondientes al backend, frontend, y base de datos. En conjunto a ellos, se crean una red virtual **chupipandi-net** y un volumen **db-data** donde persistirán los datos de la BD.
 
 ```bash
 # Arranca en background los contenedores
@@ -17,19 +18,20 @@ docker compose down [-v, --volumes]
 ```
 
 ### Direcciones web
-| Microservicio | URL | Microservicio | URL |
-| -------- | --- | ------ | ---- |
-| Correctores backend | http://localhost:8081/ | Evalexamenes backend | http://localhost:8080/ |
-| Correctores frontend | http://localhost:4242/ | Evalexamenes frontend | http://localhost:4200/ |
+| Microservicio | URL |
+| -------- | --- |
+| Correctores backend | http://localhost:8081/ |
+| Correctores frontend | http://localhost:4242/ |
 
-Consulta: [GestionCorrectores API](GestionCorrectores/.docs/API-Reference.md) y [EvaluacionExamenes API](EvaluacionExamenes/.docs/API-Reference.md)
+> [!Tip]
+> Consulta [GestionCorrectores API](GestionCorrectores/.docs/API-Reference.md) para más información sobre las rutas y métodos disponibles.
 
 ---
 
 En caso de querer correr los contenedores individualmente, cada carpeta contiene su correspondiente `Dockerfile`, a excepción de el la base de datos, que se encuentra en la raiz del proyecto.
 
 > [!Important]
-> Tener en cuenta que al ejecutar con docker, ambos microservicios necesitan tener el contenedor de la base de datos corriendo para poder iniciarse correctamente. Además, para comunicar los contenedores entre sí, es necesario crear una nueva *network* y asignársela mediante el flag `--network <red>` a cada contenedor.
+> Tener en cuenta que el backend depende de la base de datos, por lo que será necesario tener dicho contenedor ya corriendo para poder iniciarse el backend correctamente. Además, para comunicar los contenedores entre sí, es necesario crear una nueva *network* y asignársela mediante el flag `--network <red>` a cada contenedor.
 
 ### Contenedor para H2-Database
 
@@ -60,7 +62,6 @@ docker run -itp <host port>:<cont.port> --name <name> --network <red> <image>
 ## Despliegue con maven y/o archivo jar
 
 - Microservicio [Gestión de Correctores](GestionCorrectores/.docs/README.corr.md)
-- Microservicio [Evaluación de Examenes](EvaluacionExamenes/.docs/README.eval.md)
 
 ## Authors
 
