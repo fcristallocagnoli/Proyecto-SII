@@ -17,7 +17,7 @@ java -jar -Dspring.profiles.active=dev target/ms_corrector-0.0.1-SNAPSHOT.jar
 # Ejecución con persistencia (base de datos almacenada en carpeta database):
 java -jar -Dspring.profiles.active=prod target/ms_corrector-0.0.1-SNAPSHOT.jar
 ```
-> **Note**
+> [!Note]
 > De no especificar el perfil de ejecución, se ejecutará por defecto en memoria (perfil `dev`).
 - - -
 ### Ejecucion mediante mvn spring-boot
@@ -35,7 +35,7 @@ Parámetros disponibles para el ejecutable:
 - `prod`: ejecuta la operación en modo producción (activa spring profile `prod`) (con persistencia de datos)
 - `-skip`: para saltarse la fase de comprobación de tests
 
-> **Note**
+> [!Note]
 > Si no se le especifica el modo de ejecución, el perfil por defecto es `dev` (en memoria)
 
 ## Frontend

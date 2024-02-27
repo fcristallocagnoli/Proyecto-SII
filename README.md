@@ -28,7 +28,7 @@ Consulta: [GestionCorrectores API](GestionCorrectores/.docs/API-Reference.md) y 
 
 En caso de querer correr los contenedores individualmente, cada carpeta contiene su correspondiente `Dockerfile`, a excepción de el la base de datos, que se encuentra en la raiz del proyecto.
 
-> **Important**
+> [!Important]
 > Tener en cuenta que al ejecutar con docker, ambos microservicios necesitan tener el contenedor de la base de datos corriendo para poder iniciarse correctamente. Además, para comunicar los contenedores entre sí, es necesario crear una nueva *network* y asignársela mediante el flag `--network <red>` a cada contenedor.
 
 ### Contenedor para H2-Database
@@ -54,7 +54,7 @@ docker build <carpeta con Dockerfile> -t <microservicio>/<back,front>
 # Poner en marcha contenedor
 docker run -itp <host port>:<cont.port> --name <name> --network <red> <image>
 ```
-> **Note**
+> [!Note]
 > El nombre sugerido para el servicio de la BD es `db-service`, en caso de escoger otro, será necesario editar la variable de entorno `SPRING_DATASOURCE_URL` al crear el contenedor del microservicio
 
 ## Despliegue con maven y/o archivo jar
