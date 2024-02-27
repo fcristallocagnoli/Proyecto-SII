@@ -1,6 +1,6 @@
 ## API Reference
 
-> **Note**
+> [!Note]
 > Para acceder a casi todos los endpoints es necesario incluir un token en la cabecera de la petición. Este debe seguir el formato especificado [aquí](README.token.md#formato-ejemplo). La excepción son los endpoints bajo la dirección */token*, pues son públicos.
 >
 > La incorporación del token la hace la aplicacion automáticamente, pero si se desea acceder al servicio desde la terminal es necesario proporcionarlo. Se recomienda para ello exportar una variable donde se almacene el token.
@@ -48,7 +48,7 @@ curl -X 'PUT' \
     }'
 ```
 
-> **Important**
+> [!Important]
 > Se podrá proporcionar el ID de la materia, el nombre de esta, o ambos. En cualquier caso, consultar las [materias disponibles](#materias-disponibles) y sus correspondientes IDs. Una incorrespondencia resultará en un error.
 
 #### Elimina un corrector
@@ -105,7 +105,7 @@ curl -X 'POST' \
     }'
 ```
 
-> **Important**
+> [!Important]
 > Se podrá proporcionar el ID de la materia, el nombre de esta, o ambos. En cualquier caso, consultar las [materias disponibles](#materias-disponibles) y sus correspondientes IDs. Una incorrespondencia resultará en un error.
 
 #### Obtiene un nuevo token
