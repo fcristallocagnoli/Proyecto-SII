@@ -17,7 +17,7 @@ java -jar -Dspring.profiles.active=dev target/ms_corrector-0.0.1-SNAPSHOT.jar
 # Ejecución con persistencia (base de datos almacenada en carpeta database):
 java -jar -Dspring.profiles.active=prod target/ms_corrector-0.0.1-SNAPSHOT.jar
 ```
-> **Note**
+> [!Note]
 > De no especificar el perfil de ejecución, se ejecutará por defecto en memoria (perfil `dev`).
 - - -
 ### Ejecucion mediante mvn spring-boot
@@ -28,14 +28,14 @@ mvn spring-boot:run [-Dspring-boot.run.arguments="--spring.profiles.active={dev,
 - - -
 ### Ejecución mediante archivo por lotes (Windows)
 
-El archivo por lotes `start.bat` hace la misma función que la ejecución mediante el fichero jar, pero de una forma más sencilla y automatizada. Para ejecutarlo, simplemente ejecutar `./start.bat` en la terminal.
+El archivo por lotes `win-setup.bat` hace la misma función que la ejecución mediante el fichero jar, pero de una forma más sencilla y automatizada. Para ejecutarlo, simplemente ejecutar `./win-setup.bat` en la terminal.
 
 Parámetros disponibles para el ejecutable:
 - `-b`: ejecuta la operación en segundo plano
 - `prod`: ejecuta la operación en modo producción (activa spring profile `prod`) (con persistencia de datos)
 - `-skip`: para saltarse la fase de comprobación de tests
 
-> **Note**
+> [!Note]
 > Si no se le especifica el modo de ejecución, el perfil por defecto es `dev` (en memoria)
 
 ## Frontend
