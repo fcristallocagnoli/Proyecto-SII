@@ -15,7 +15,22 @@ on:
     branches: [ "master" ]
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      files: ${{ steps.get_changed_files.outputs.files }}
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Get changed files
+      id: get_changed_files
+      run: echo "files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})" >> $GITHUB_OUTPUT
+    - name: Print changed files
+      run: echo "${{ steps.get_changed_files.outputs.files }}"
+
   verify-correctores:
+    needs: changes
+    if: contains(needs.changes.outputs.files, 'GestionCorrectores/')
 
     runs-on: ubuntu-latest
 
