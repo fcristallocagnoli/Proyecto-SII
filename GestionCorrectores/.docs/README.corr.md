@@ -28,7 +28,7 @@ mvn spring-boot:run [-Dspring-boot.run.arguments="--spring.profiles.active={dev,
 - - -
 ### Ejecución mediante archivo por lotes (Windows)
 
-El archivo por lotes `start.bat` hace la misma función que la ejecución mediante el fichero jar, pero de una forma más sencilla y automatizada. Para ejecutarlo, simplemente ejecutar `./start.bat` en la terminal.
+El archivo por lotes `win-setup.bat` hace la misma función que la ejecución mediante el fichero jar, pero de una forma más sencilla y automatizada. Para ejecutarlo, simplemente ejecutar `./win-setup.bat` en la terminal.
 
 Parámetros disponibles para el ejecutable:
 - `-b`: ejecuta la operación en segundo plano
