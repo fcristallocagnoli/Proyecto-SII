@@ -21,7 +21,9 @@ jobs:
       files: ${{ steps.get_changed_files.outputs.files }}
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v2
+      with:
+          fetch-depth: 0
     - name: Get changed files
       id: get_changed_files
       run: echo "files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})" >> $GITHUB_OUTPUT
