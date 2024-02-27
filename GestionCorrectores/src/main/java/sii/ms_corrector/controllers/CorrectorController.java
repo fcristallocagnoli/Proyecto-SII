@@ -28,7 +28,7 @@ import sii.ms_corrector.dtos.CorrectorDTO;
 import sii.ms_corrector.dtos.CorrectorNuevoDTO;
 import sii.ms_corrector.entities.Corrector;
 import sii.ms_corrector.services.CorrectorService;
-import sii.ms_corrector.services.exceptions.AccesoNoAutorizado;
+import sii.ms_corrector.services.exceptions.AccesoProhibido;
 import sii.ms_corrector.services.exceptions.CorrectorNoEncontrado;
 import sii.ms_corrector.services.exceptions.CorrectorYaExiste;
 import sii.ms_corrector.services.exceptions.PeticionIncorrecta;
@@ -60,7 +60,7 @@ public class CorrectorController {
 	 * @param id id del corrector a solicitar
 	 * @param header cabecera para extraer el token (incluir token al hacer la peticion)
 	 * @return {@code 200 OK} - el corrector solicitado {@link CorrectorDTO}
-	 * @exception AccesoNoAutorizado {@code 401 Unauthorized} Acceso no autorizado
+	 * @exception AccesoProhibido {@code 403 Forbidden} Prohibido
 	 * @exception CorrectorNoEncontrado {@code 404 Not Found} El corrector no existe
 	 */
 	@PreAuthorize("hasRole('ROLE_CORRECTOR')")
@@ -80,7 +80,7 @@ public class CorrectorController {
 	 * @param corrector {@link CorrectorNuevoDTO} que contiene los nuevos cambios
 	 * @param header cabecera para extraer el token (incluir token al hacer la peticion)
 	 * @return {@code 200 OK} - {@link Void}
-	 * @exception AccesoNoAutorizado {@code 401 Unauthorized} Acceso no autorizado
+	 * @exception AccesoProhibido {@code 403 Forbidden} Prohibido
 	 * @exception CorrectorNoEncontrado {@code 404 Not Found} El corrector no existe
 	 * @see "para obtener un {@code 200 OK}, la materia contenida en {@link CorrectorNuevoDTO}
 	 * debe ser una de las declaradas en en método {@link sii.ms_corrector.services.MateriaService#inicializar() inicializar()}"
@@ -97,7 +97,7 @@ public class CorrectorController {
 	 * @param id id del corrector
 	 * @param header cabecera para extraer el token (incluir token al hacer la peticion)
 	 * @return {@code 200 OK} - {@link Void}
-	 * @exception AccesoNoAutorizado {@code 401 Unauthorized} Acceso no autorizado
+	 * @exception AccesoProhibido {@code 403 Forbidden} Prohibido
 	 * @exception CorrectorNoEncontrado {@code 404 Not Found} El corrector no existe
 	 */
 	@PreAuthorize("hasRole('ROLE_CORRECTOR')")
@@ -112,7 +112,7 @@ public class CorrectorController {
      * @param idConvocatoria (para query, es opcional)
      * @param header cabecera para extraer el token (incluir token al hacer la peticion)
      * @return {@code 200 OK} - {@link List}<{@linkplain CorrectorDTO}> Lista de correctores
-	 * @exception AccesoNoAutorizado {@code 401 Unauthorized} Acceso no autorizado
+	 * @exception AccesoProhibido {@code 403 Forbidden} Prohibido
      */
 	@PreAuthorize("hasRole('ROLE_CORRECTOR')")
     @GetMapping
@@ -133,7 +133,7 @@ public class CorrectorController {
      * @param builder {@link UriComponentsBuilder}
      * @param header cabecera para extraer el token (incluir token al hacer la peticion)
      * @return {@code 201 Created} - {@link Void}
-	 * @exception AccesoNoAutorizado {@code 401 Unauthorized} Acceso no autorizado
+	 * @exception AccesoProhibido {@code 403 Forbidden} Prohibido
 	 * @exception CorrectorYaExiste {@code 409 Conflict} El corrector ya existe
 	 * @see "para obtener un {@code 200 OK}, la materia contenida en {@link CorrectorNuevoDTO}
 	 * debe ser una de las declaradas en en método {@link sii.ms_corrector.services.MateriaService#inicializar() inicializar()}"
@@ -150,8 +150,8 @@ public class CorrectorController {
 		return ResponseEntity.created(uri).build();
 	}
 	
-    @ExceptionHandler(AccesoNoAutorizado.class)
-    @ResponseStatus(code = HttpStatus.UNAUTHORIZED)	// 401
+    @ExceptionHandler(AccesoProhibido.class)
+    @ResponseStatus(code = HttpStatus.FORBIDDEN)	// 403
     public void accesoNoAutorizado() {}
 
     @ExceptionHandler(CorrectorNoEncontrado.class)
